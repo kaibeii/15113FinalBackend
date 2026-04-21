@@ -23,6 +23,9 @@ async function removeBackground(imageBuffer) {
     return Buffer.from(response.data);
   } catch (err) {
     console.error('remove.bg error:', err.message);
+    console.error('remove.bg response status:', err.response?.status);
+    console.error('remove.bg response data:', err.response?.data?.toString());
+    console.log('Returning original buffer without background removal');
     return imageBuffer;
   }
 }

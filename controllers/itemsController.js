@@ -41,7 +41,7 @@ async function uploadItem(req, res) {
     console.log('Received image, processing...');
 
     const cleanBuffer = await removeBackground(req.file.buffer);
-    const { url: imageUrl, color: suggestedColor } = await uploadBuffer(cleanBuffer);
+    const { imageUrl, color: suggestedColor } = await uploadBuffer(cleanBuffer);
 
     // Use user-confirmed color if provided, otherwise use Cloudinary suggestion
     const confirmedColor = req.body.color || suggestedColor;
