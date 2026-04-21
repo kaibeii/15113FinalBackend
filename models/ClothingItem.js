@@ -14,6 +14,10 @@ const ClothingItemSchema = new mongoose.Schema({
     type: String,
     default: 'other',
   },
+  description: {
+    type: String,
+    default: '',
+  },
   tags: [String],
   createdAt: {
     type: Date,
