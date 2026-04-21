@@ -1,9 +1,10 @@
 const express = require('express');
-const multer  = require('multer');
+const multer = require('multer');
 const {
   uploadItem,
   getItems,
   deleteItem,
+  updateItem,
   generateOutfit,
 } = require('../controllers/itemsController');
 
@@ -17,6 +18,7 @@ const upload = multer({
 router.post('/upload',      upload.single('image'), uploadItem);
 router.get('/items',        getItems);
 router.delete('/items/:id', deleteItem);
+router.patch('/items/:id',  updateItem);
 router.get('/outfit',       generateOutfit);
 
 router.get('/', (req, res) => {
