@@ -44,7 +44,9 @@ async function uploadItem(req, res) {
     const { imageUrl, color: suggestedColor } = await uploadBuffer(cleanBuffer);
 
     // Use user-confirmed color if provided, otherwise use Cloudinary suggestion
-    const confirmedColor = req.body.color || suggestedColor;
+    const confirmedColor = (req.body.color && req.body.color !== 'unknown')
+  ? req.body.color
+  : suggestedColor;
     const confirmedType  = req.body.type || 'other';
     const description    = req.body.description || '';
 
