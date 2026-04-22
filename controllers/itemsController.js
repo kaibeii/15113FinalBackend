@@ -1,8 +1,7 @@
 const ClothingItem = require('../models/ClothingItem');
+const SavedOutfit = require('../models/SavedOutfit');
 const { removeBackground } = require('../services/removeBg');
 const { uploadBuffer, NEUTRALS } = require('../services/cloudinary');
-
-
 
 const COLOR_PAIRS = {
   navy:   ['beige', 'white', 'grey', 'brown'],
@@ -19,7 +18,7 @@ function colorsMatch(color1, color2) {
   if (NEUTRALS.includes(color1) || NEUTRALS.includes(color2)) return true;
   if (color1 === 'multicolor' || color1 === 'pattern') return NEUTRALS.includes(color2);
   if (color2 === 'multicolor' || color2 === 'pattern') return NEUTRALS.includes(color1);
-  if (color1 === color2) return true;
+  if (color1 === color2) return NEUTRALS.includes(color1);
   const pairs = COLOR_PAIRS[color1] || [];
   return pairs.includes(color2);
 }
@@ -43,10 +42,9 @@ async function uploadItem(req, res) {
     const cleanBuffer = await removeBackground(req.file.buffer);
     const { imageUrl, color: suggestedColor } = await uploadBuffer(cleanBuffer);
 
-    // Use user-confirmed color if provided, otherwise use Cloudinary suggestion
     const confirmedColor = (req.body.color && req.body.color !== 'unknown')
-  ? req.body.color
-  : suggestedColor;
+      ? req.body.color
+      : suggestedColor;
     const confirmedType  = req.body.type || 'other';
     const description    = req.body.description || '';
 
@@ -58,8 +56,6 @@ async function uploadItem(req, res) {
     });
 
     console.log('Item saved:', item._id, '| Color:', confirmedColor);
-
-    // Return item AND suggestedColor so frontend can pre-select it
     res.json({ item, suggestedColor });
   } catch (err) {
     console.error('Upload error:', err.message);
@@ -107,7 +103,7 @@ async function updateItem(req, res) {
 // GET /outfit
 async function generateOutfit(req, res) {
   try {
-    const tops = await ClothingItem.find({ type: { $in: ['top', 'sweater'] } });
+    const tops    = await ClothingItem.find({ type: { $in: ['top', 'sweater'] } });
     const bottoms = await ClothingItem.find({ type: 'bottom' });
     const shoes   = await ClothingItem.find({ type: 'shoes' });
 
@@ -128,4 +124,46 @@ async function generateOutfit(req, res) {
   }
 }
 
-module.exports = { uploadItem, getItems, deleteItem, updateItem, generateOutfit };
+// POST /outfits
+async function saveOutfit(req, res) {
+  try {
+    const { top, bottom, shoes, name } = req.body;
+    const outfit = await SavedOutfit.create({ top, bottom, shoes, name });
+    console.log('Outfit saved:', outfit._id);
+    res.json({ outfit });
+  } catch (err) {
+    console.error('Save outfit error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// GET /outfits
+async function getSavedOutfits(req, res) {
+  try {
+    const outfits = await SavedOutfit.find().sort({ savedAt: -1 });
+    res.json({ outfits });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// DELETE /outfits/:id
+async function deleteSavedOutfit(req, res) {
+  try {
+    await SavedOutfit.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+module.exports = {
+  uploadItem,
+  getItems,
+  deleteItem,
+  updateItem,
+  generateOutfit,
+  saveOutfit,
+  getSavedOutfits,
+  deleteSavedOutfit,
+};
