@@ -105,7 +105,7 @@ async function updateItem(req, res) {
 // GET /outfit
 async function generateOutfit(req, res) {
   try {
-    const tops    = await ClothingItem.find({ type: 'top' });
+    const tops = await ClothingItem.find({ type: { $in: ['top', 'sweater'] } });
     const bottoms = await ClothingItem.find({ type: 'bottom' });
     const shoes   = await ClothingItem.find({ type: 'shoes' });
 
