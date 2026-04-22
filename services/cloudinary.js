@@ -22,7 +22,7 @@ const COLOR_FAMILIES = {
   beige:   ['#f5f5dc', '#d2b48c', '#c8b89a', '#d7ccc8', '#bcaaa4'],
 };
 
-const NEUTRALS = ['black', 'white', 'grey', 'beige', 'navy'];
+const NEUTRALS = ['black', 'white', 'grey', 'beige', 'brown'];
 
 function hexToRgb(hex) {
   const clean = hex.replace('#', '');

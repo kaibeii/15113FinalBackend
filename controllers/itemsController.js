@@ -1,8 +1,8 @@
 const ClothingItem = require('../models/ClothingItem');
 const { removeBackground } = require('../services/removeBg');
-const { uploadBuffer } = require('../services/cloudinary');
+const { uploadBuffer, NEUTRALS } = require('../services/cloudinary');
 
-const NEUTRALS = ['black', 'white', 'grey', 'beige', 'brown'];
+
 
 const COLOR_PAIRS = {
   navy:   ['beige', 'white', 'grey', 'brown'],
